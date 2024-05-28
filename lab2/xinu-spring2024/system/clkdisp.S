@@ -2,6 +2,7 @@
 
 /*------------------------------------------------------------------------
  * clkdisp  -  Interrupt dispatcher for clock interrupts (x86 version)
+ * added clkcounterms variable in Clock interrupt and system timer 
  *------------------------------------------------------------------------
  */
 #include <icu.s>
