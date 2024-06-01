@@ -12,7 +12,7 @@ clkdisp:
 		cli			# Disable further interrupts
 		movb	$EOI,%al	# Reset interrupt
 		outb	%al,$OCW1_2
-
+/* For 3.1 increase clkcounterms during each clock interrupt */
 		movl (clkcounterms), %ecx # ecx = clkcounterms
 		addl	$0x1, %ecx  # ecx = ecx + 1
 		movl	%ecx, (clkcounterms) # clkcounterms = ecx

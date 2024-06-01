@@ -42,11 +42,6 @@
 
 struct procent {		/* Entry in the process table		*/
 	uint16	prstate;	/* Process state: PR_CURR, etc.		*/
-	uint32 prcpu; /* accumulative CPU usage of a given process (in unit of msec) */
-	uint32 prresptime; /*total time a process has spent since its creation in the readylist*/
-	uint32 prctxswcount; /*counts how many times a process was context-switched in, i.e., entered state PR_CURR from state PR_READY*/
-	uint32 prbeginready; /* (in unit of msec) */
-	uint32 time_slice;
 	pri16	prprio;		/* Process priority			*/
 	char	*prstkptr;	/* Saved stack pointer			*/
 	char	*prstkbase;	/* Base of run time stack		*/
@@ -57,6 +52,12 @@ struct procent {		/* Entry in the process table		*/
 	umsg32	prmsg;		/* Message sent to this process		*/
 	bool8	prhasmsg;	/* Nonzero iff msg is valid		*/
 	int16	prdesc[NDESC];	/* Device descriptors for process	*/
+
+	uint32 prcpu; /* For 3.1  store the cumulative CPU usage (msec) for each process */	
+	uint32 prresptime; /* For 3.3 response time, total time a process has spent since its creation in the readylist */
+	uint32 prctxswcount; /*For 3.3, counts how many times a process was context-switched in, i.e., entered state PR_CURR from state PR_READY*/	
+	uint32 prbeginready; /* For 3.3,  when a process enters the readylist, use this variable record the current time in new process table  */	
+	uint32 time_slice;
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/
@@ -67,5 +68,7 @@ extern	int32	prcount;	/* Currently active processes		*/
 extern	pid32	currpid;	/* Currently executing process		*/
 volatile extern uint32 currcpu;	/* estimates the time (in msec) that the current process has spent in state PR_CURR after being context-switched in */
 
-
+#define XINUDEBUG  /*define the macro XINUDEBUG to enable debugging prints
+*/ 
 #define STOPPINGTIME 8000
+

@@ -23,6 +23,7 @@ void	clkhandler()
 		count1000 = 1000;
 	}
 
+	/*For 3.2 increment currcpu in clkhandler function each 1 msec */
 	currcpu++;
 
 	/* Handle sleeping processes if any exist */

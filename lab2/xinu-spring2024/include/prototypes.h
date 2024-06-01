@@ -618,9 +618,11 @@ extern	void greetings(void);
 
 extern syscall responsetime(pid32 pid);
 
-extern void cpubnd(void);
+extern void cpubnd(void); // implement the CPU bound app
 
-extern void iobnd(void);
+extern void iobnd(void); // implement the I/O bound app
+
+extern void joker(void); //For manauplating the scheduler
 
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))

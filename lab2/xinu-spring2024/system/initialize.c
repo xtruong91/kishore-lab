@@ -22,7 +22,8 @@ extern void greetings(void);
 struct	procent	proctab[NPROC];	/* Process table			*/
 struct	sentry	semtab[NSEM];	/* Semaphore table			*/
 struct	memblk	memlist;	/* List of free memory blocks		*/
-struct dynsched_tab dynprio[11];
+
+struct dynsched_tab dynprio[11]; /*For 4.2 Xinu scheduling table, declare a global array of truct dynsched_tab*/
 
 /* Active system status */
 
@@ -182,14 +183,17 @@ static	void	sysinit()
 
 	Defer.ndefers = 0;
 
-	/* Initialize dynamic priority table */
+	/* For 4.2 initialize the entry for idle process*/
 	dynprio[0].ts_tqexp = 0;
 	dynprio[0].ts_slpret = 0;
 	dynprio[0].ts_quantum = QUANTUM;
-	for(i=1;i<=10;i++){
-		dynprio[i].ts_tqexp = (1<i-1?i-1:1);
-		dynprio[i].ts_slpret = (10<i+1?10:i+1);
-		dynprio[i].ts_quantum = 110 - 10*i;
+
+	/* For 4.2 configuration of other entries*/
+	for(i=1;i<=10;i++) {
+
+		dynprio[i].ts_tqexp = (1 > i-1 ? 1 : i-1); //dynprio[i].ts_tqexp = max(1, i-1)
+		dynprio[i].ts_slpret= (10 < i+1 ? 10 : i+1); //dynprio[i].ts_slpret = min(10, i+1)
+		dynprio[i].ts_quantum = 110 - 10*i;			 // dynprio[i].ts_quantum = 110 - 10*i
 	}
 
 	/* Initialize process table entries free */

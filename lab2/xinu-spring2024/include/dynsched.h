@@ -1,3 +1,5 @@
+/* dynsched.h - For 4, define a new kernel header  include/dynsched.h*/
+
 #include<kernel.h>
 
 struct dynsched_tab

@@ -10,7 +10,7 @@
 #define CLKTICKS_PER_SEC  1000	/* clock timer resolution		*/
 
 extern	uint32	clktime;	/* current time in secs since boot	*/
-extern	uint32	clkcounterms;	/* lab2 3.1 Clock interrupt and system timer	*/
+extern	uint32	clkcounterms;	/* For 3.1 clkcounterms represent the number of msec elpased since boot	*/
 
 extern	qid16	sleepq;		/* queue for sleeping processes		*/
 extern	uint32	preempt;	/* preemption counter			*/

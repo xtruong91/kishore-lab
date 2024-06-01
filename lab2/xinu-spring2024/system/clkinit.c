@@ -6,8 +6,10 @@ uint32	clktime;		/* Seconds since boot			*/
 uint32	ctr1000 = 0;		/* Milliseconds since boot		*/
 qid16	sleepq;			/* Queue of sleeping processes		*/
 uint32	preempt;		/* Preemption counter			*/
-uint32 clkcounterms;
-volatile uint32 currcpu;
+
+uint32 clkcounterms; /* increment milisec timer, for 3.1 clock intterupt*/
+
+volatile uint32 currcpu; /*For 3.2, store the cumulative CPU usage (msec) for each process */
 
 /*------------------------------------------------------------------------
  * clkinit  -  Initialize the clock and sleep queue at startup (x86)
@@ -28,7 +30,10 @@ void	clkinit(void)
 	/* Initialize the time since boot to zero */
 
 	clktime = 0;
+	/* For 3.1 , initialize the clkcounterms since boot in msec to zero */
 	clkcounterms = 0;
+
+	/*For 3.2, initialize the cumulative since boot to zero */
 	currcpu = 0;
 
 	/* Set interrupt vector for the clock to invoke clkdisp */
