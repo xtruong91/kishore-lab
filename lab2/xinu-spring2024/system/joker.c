@@ -16,8 +16,8 @@ void joker(void) {
     // adjust priority 
 	chprio(getpid(),15);
 	// Perform some CPU-bound operations (e.g., arithmetic, loops)
-	uint32_t startTime = clkcounterms;
-    uint32_t elapsedTime = 0;
+	uint32 startTime = clkcounterms;
+    uint32 elapsedTime = 0;
 
 	//Terminate after 8 seconds
 	while (elapsedTime <= STOPPINGTIME) {
@@ -26,6 +26,9 @@ void joker(void) {
 	}
 
     // Print benchmark output
-    kprintf("PID %d: CPU-bound, clkcounterms: %u, CPU usage: %.2f%%, Response time: %u ms\n",
-            currpid, clkcounterms, (float)elapsedTime / STOPPINGTIME * 100, elapsedTime);
+
+	intmask mask = disable();
+    kprintf("PID %d: Joker process, clkcounterms: %u, CPU usage: %u, Response time: %u ms\n",
+            currpid, clkcounterms, proctab[currpid].prresptime, responsetime(currpid));
+	restore(mask);
 }

@@ -18,12 +18,11 @@ process	main(void)
 {
 	kprintf("Test process executing main(): PID = %d\n", getpid());
 
-	// set priority of parent process is 10
-	chprio(getpid(),10);
 
-	test_cpu_usage_response_time();
 
-	test_dynamic_priority_scheduling();
+	//test_cpu_usage_response_time();
+
+	//test_dynamic_priority_scheduling();
 
 	test_bonus_problem();
 
@@ -70,15 +69,18 @@ void test_cpu_usage_response_time()
 
 void test_dynamic_priority_scheduling()
 {
+	// set priority of parent process is 10
 	chprio(getpid(),10);
+	kprintf("changed priority of process main: priority = %d\n", getprio(currpid));	
 	run_benchmark_A();
-	// run_benchmark_B();
-	// run_benchmark_C();
-	// run_benchmark_D();
+	 run_benchmark_B();
+	run_benchmark_C();
+	run_benchmark_D();
 }
 
 void test_bonus_problem()
 {
+	kprintf("Running the bonus problem ...\n");
 	resume(create(cpubnd, 1024, 30, "cpu bound 1", 0));
 	resume(create(cpubnd, 1024, 30, "cpu bound 2", 0));
 	 
@@ -90,6 +92,7 @@ void test_bonus_problem()
 
 static void run_benchmark_A()
 {
+	kprintf("Running the benchmark A ...\n");
 	resume(create(cpubnd, 1024, 30, "cpu bound 1", 0));
 	resume(create(cpubnd, 1024, 30, "cpu bound 2", 0));
 	resume(create(cpubnd, 1024, 30, "cpu bound 3", 0));
@@ -99,6 +102,7 @@ static void run_benchmark_A()
 }
 static void run_benchmark_B()
 {
+	kprintf("Running the benchmark B ...\n");
 	resume(create(iobnd, 1024, 30, "io bound 1", 0));
 	resume(create(iobnd, 1024, 30, "io bound 2", 0));
 	resume(create(iobnd, 1024, 30, "io bound 3", 0));
@@ -108,6 +112,7 @@ static void run_benchmark_B()
 }
 static void run_benchmark_C()
 {
+	kprintf("Running the benchmark C ...\n");
 	resume(create(iobnd, 1024, 30, "io bound 1", 0));
 	resume(create(iobnd, 1024, 30, "io bound 2", 0));
 	resume(create(iobnd, 1024, 30, "io bound 3", 0));
@@ -117,6 +122,7 @@ static void run_benchmark_C()
 }
 static void run_benchmark_D()
 {
+	kprintf("Running the benchmark D ...\n");
 	resume(create(cpubnd, 1024, 30, "cpu bound 1", 0));
 	resume(create(cpubnd, 1024, 30, "cpu bound 2", 0));
 	sleepms(3000);
