@@ -15,7 +15,7 @@ void iobnd(void){
 	int i, j;
 
 	//Check if clkcounterms has exceeded STOPPINGTIME
-	while (elapsedTime <= STOPPINGTIME)
+	while (elapsedTime < STOPPINGTIME)
 	{
 		// Run an I/O-bound task (e.g., nested loops with sleep)
 		for (i = 0; i < 100; ++i) {
@@ -32,8 +32,8 @@ void iobnd(void){
 
     // Print benchmark output
 	intmask mask = disable();
-    kprintf("PID %d: I/O-bound, clkcounterms: %u, CPU usage: %u, Response time: %u ms\n",
-            currpid, clkcounterms, proctab[currpid].prresptime , responsetime(currpid));
+    kprintf("PID %d: I/O-bound, clkcounterms: %u, CPU usage: %u, Response time: %u\n",
+            currpid, clkcounterms, proctab[currpid].prcpu , responsetime(currpid));
 	restore(mask);
 
 }

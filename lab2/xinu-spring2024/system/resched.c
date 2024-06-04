@@ -33,36 +33,31 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 
 		ptold->prstate = PR_READY;
 		ptold->prbeginready = clkcounterms;
+		ptold->prcpu += currcpu; 
+		
 		insert(currpid, readylist, ptold->prprio);
 		
 	}
 
-	// For 3.2 update prcpu and reset currcpu when a context switched occurs
-	if(ptold != NULLPROC){
-		ptold->prcpu += currcpu; 
-		currcpu = 0;
-	}
 	/* Force context switch to highest priority ready process */
 
 	currpid = dequeue(readylist);
 	ptnew = &proctab[currpid];
-
-	if(ptnew->prstate == PR_READY){
-		int32 time_in_ready = clkcounterms - ptnew->prbeginready;
-		if(time_in_ready == 0){
-			ptnew->prresptime += 1;
-		}else
-		{
-			ptnew->prresptime += time_in_ready;
-		}
-		ptnew->prctxswcount ++;
-		//kprintf("Context switch newpid: %d, newpidname: %s, oldpid: %d, new_prctxswcount: %u , old_prctxswcount: %u\n",currpid,ptnew->prname,oldpid,ptnew->prctxswcount,ptold->prctxswcount);
-	}
 	ptnew->prstate = PR_CURR;
 	preempt = QUANTUM;		/* Reset time slice for process	*/
-	ptnew->time_slice = dynprio[ptnew->prprio].ts_quantum;
-	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
+	currcpu = 0;
 
+	int32 time_in_ready = clkcounterms - ptnew->prbeginready;
+	if(time_in_ready == 0){
+		ptnew->prresptime += 1;
+	}else{
+		ptnew->prresptime += time_in_ready;
+	}
+	ptnew->prctxswcount ++;
+
+	ptnew->time_slice = dynprio[ptnew->prprio].ts_quantum;
+	
+	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
 	/* Old process returns here when resumed */
 
 	return;

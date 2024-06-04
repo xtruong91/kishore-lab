@@ -10,24 +10,30 @@
 syscall responsetime(pid32 pid) /* Process ID */
 {
 
-	intmask mask; 		/*Saved intterupt mask*/
-	uint32  total_resptime = 0;
-
-	mask = disable();
 	if (isbadpid(pid)) {
-		restore(mask);
 		return SYSERR;
 	}
-	
-	struct procent *prptr = &proctab[pid];
-	total_resptime = prptr->prresptime;
 
-	/*For 3.2, Consider border cases, such as when a process is context-switched in for the first time (i.e., prctxswcount is 0*/
-	/* if the specified process ID to a ready process */
-	if(prptr->prstate==PR_READY) {
-		total_resptime += clkcounterms - prptr->prbeginready;
+	struct procent *prptr = &proctab[pid];
+
+	if(prptr->prctxswcount==0){
+		/*  a process may have become ready for
+		the first time but not current.
+		If so, prctxswcount will be 0 and let
+		responsetime() return clkcounterms - prbeginready */
+		return clkcounterms - prptr->prbeginready;
 	}
-	restore(mask)
-	return prptr->prctxswcount == 0 ? total_resptime : total_resptime / prptr->prctxswcount;
+
+
+	if(prptr->prstate==PR_READY){
+		/* If pid specified in the argument of responsetime()
+		is that of a ready process (i.e., resides in readylist)
+		then responsetime() will add clkcounterms - prbeginready
+		to prresptime (but not update prresptime) and divide the
+		resultant value by prctxswcount + 1 */
+		return (clkcounterms-prptr->prbeginready + prptr->prresptime)/(prptr->prctxswcount+1);
+	}
+
+	return prptr->prresptime/prptr->prctxswcount;
 
 }

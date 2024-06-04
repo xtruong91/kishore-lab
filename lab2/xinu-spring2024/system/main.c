@@ -61,45 +61,51 @@ void test_dynamic_priority_scheduling()
 	// set priority of parent process is 10
 	chprio(getpid(),10);
 	kprintf("changed priority of process main: priority = %d\n", getprio(currpid));	
-
+	int i;
     /* Benchmark A */
-    for (int i = 0; i < 6; i++) {
-        resume(create(cpubnd, 1024, 10, "cpubnd", 0));
+	kprintf("Running benchmark A ....\n");
+    for (i = 0; i < 6; i++) {
+        resume(create(cpubnd, 1024, 20, "cpubndA", 0));
     }
-    sleepms(8000);
+    //sleepms(8000);
 
 	/* Benchmark B */
-    for (int i = 0; i < 6; i++) {
-        resume(create(iobnd, 1024, 10, "iobnd", 0));
+	kprintf("Running benchmark B ....\n");
+    for (i = 0; i < 6; i++) {
+        resume(create(iobnd, 1024, 20, "iobndB", 0));
     }
-    sleepms(8000);
+    //sleepms(8000);
 	
 	/* Benchmark C */
-    for (int i = 0; i < 3; i++) {
-        resume(create(cpubnd, 1024, 10, "cpubnd", 0));
-        resume(create(iobnd, 1024, 10, "iobnd", 0));
+	kprintf("Running benchmark C ....\n");
+    for (i = 0; i < 3; i++) {
+        resume(create(cpubnd, 1024, 20, "cpubndC", 0));
+        resume(create(iobnd, 1024, 20, "iobndC", 0));
     }
-    sleepms(8000);
+    //sleepms(8000);
 
 	/* Benchmark D */
-    for (int i = 0; i < 2; i++) {
-        resume(create(cpubnd, 1024, 10, "cpubnd", 0));
+	kprintf("Running benchmark D ....\n");
+    for (i = 0; i < 2; i++) {
+        resume(create(cpubnd, 1024, 20, "cpubndD", 0));
     }
     sleepms(3000);
-    for (int i = 0; i < 2; i++) {
-        resume(create(cpubnd, 1024, 10, "cpubnd", 0));
+    for (i = 0; i < 2; i++) {
+        resume(create(cpubnd, 1024, 20, "cpubndD", 0));
     }
-    sleepms(8000);
+    //sleepms(8000);
 }
 
 void test_bonus_problem()
 {
+	int i;
     /* Benchmark E */
-    for (int i = 0; i < 2; i++) {
-        resume(create(cpubnd, 1024, 10, "cpubnd", 0));
-        resume(create(iobnd, 1024, 10, "iobnd", 0));
+	kprintf("Running bonus problem ....\n");
+    for (i = 0; i < 2; i++) {
+        resume(create(cpubnd, 1024, 10, "cpubndE", 0));
+        resume(create(iobnd, 1024, 10, "iobndE", 0));
     }
     resume(create(joker, 1024, 10, "joker", 0));
-    sleepms(8000);
+    //sleepms(8000);
 }
 

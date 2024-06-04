@@ -21,7 +21,7 @@ void joker(void) {
 	uint32 i;
 
 	//Terminate after 8 seconds
-	while (elapsedTime <= STOPPINGTIME) {
+	while (elapsedTime < STOPPINGTIME) {
 		// Calculate elapsed time
 		for (i = 0; i < 10000; i++) {
             /* Consume some CPU time */
@@ -35,7 +35,7 @@ void joker(void) {
 
     // Print benchmark output
 	intmask mask = disable();
-    kprintf("PID %d: Joker process, clkcounterms: %u, CPU usage: %u, Response time: %u ms\n",
+    kprintf("PID %d: Joker process, clkcounterms: %u, CPU usage: %u, Response time: %u\n",
             currpid, clkcounterms, proctab[currpid].prcpu, responsetime(currpid));
 	restore(mask);
 }
