@@ -53,8 +53,8 @@ struct procent {		/* Entry in the process table		*/
 	bool8	prhasmsg;	/* Nonzero iff msg is valid		*/
 	int16	prdesc[NDESC];	/* Device descriptors for process	*/
 
-	uint32 prcpu; /* For 3.1  store the cumulative CPU usage (msec) for each process */	
-	uint32 prresptime; /* For 3.3 response time, total time a process has spent since its creation in the readylist */
+	uint32 prcpu; /* CPU usage of the current process in milliseconds */	
+	uint32 prresptime; /* For 3.3 total time a process has spent since its creation in the readylist */
 	uint32 prctxswcount; /*For 3.3, counts how many times a process was context-switched in, i.e., entered state PR_CURR from state PR_READY*/	
 	uint32 prbeginready; /* For 3.3,  when a process enters the readylist, use this variable record the current time in new process table  */	
 	uint32 time_slice;

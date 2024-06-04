@@ -18,17 +18,24 @@ void joker(void) {
 	// Perform some CPU-bound operations (e.g., arithmetic, loops)
 	uint32 startTime = clkcounterms;
     uint32 elapsedTime = 0;
+	uint32 i;
 
 	//Terminate after 8 seconds
 	while (elapsedTime <= STOPPINGTIME) {
 		// Calculate elapsed time
+		for (i = 0; i < 10000; i++) {
+            /* Consume some CPU time */
+        }
+        if (clkcounterms % 2 == 0) {
+            /* Occasionally make a blocking call to appear I/O-bound */
+            sleepms(100);
+        }
     	elapsedTime = clkcounterms - startTime;
 	}
 
     // Print benchmark output
-
 	intmask mask = disable();
     kprintf("PID %d: Joker process, clkcounterms: %u, CPU usage: %u, Response time: %u ms\n",
-            currpid, clkcounterms, proctab[currpid].prresptime, responsetime(currpid));
+            currpid, clkcounterms, proctab[currpid].prcpu, responsetime(currpid));
 	restore(mask);
 }

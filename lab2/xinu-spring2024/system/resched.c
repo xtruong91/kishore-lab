@@ -22,13 +22,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 
 	/* Point to process table entry for the current (old) process */
 
-	/* added for 4.1, handle the context-switched */
-	pid32 oldpid = currpid;
 	ptold = &proctab[currpid];
-
-#ifndef XINUDEBUG 	
-	kprintf("old Process: %s, old state: %u, new Process: %s, new state: %u\n", ptold->prname,ptold->prstate, ptnew->prname,ptnew->prstate);
-#endif
 
 	if (ptold->prstate == PR_CURR) {  /* Process remains eligible */
 		if (ptold->prprio > firstkey(readylist)) {
@@ -43,18 +37,24 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 		
 	}
 
-	// Added for 3.2 CPU Usage will be sum of prcpu and currcpu
-	ptold->prcpu += currcpu; // add currcpu to prcpu of process being context switched out
-	currcpu = 0; // reset currcpu
-
+	// For 3.2 update prcpu and reset currcpu when a context switched occurs
+	if(ptold != NULLPROC){
+		ptold->prcpu += currcpu; 
+		currcpu = 0;
+	}
 	/* Force context switch to highest priority ready process */
 
 	currpid = dequeue(readylist);
 	ptnew = &proctab[currpid];
+
 	if(ptnew->prstate == PR_READY){
-		int32 diff = clkcounterms - ptnew->prbeginready;
-		if(diff<1)diff=1;
-		ptnew->prresptime += diff;
+		int32 time_in_ready = clkcounterms - ptnew->prbeginready;
+		if(time_in_ready == 0){
+			ptnew->prresptime += 1;
+		}else
+		{
+			ptnew->prresptime += time_in_ready;
+		}
 		ptnew->prctxswcount ++;
 		//kprintf("Context switch newpid: %d, newpidname: %s, oldpid: %d, new_prctxswcount: %u , old_prctxswcount: %u\n",currpid,ptnew->prname,oldpid,ptnew->prctxswcount,ptold->prctxswcount);
 	}
