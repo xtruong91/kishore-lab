@@ -65,35 +65,31 @@ void test_dynamic_priority_scheduling()
     /* Benchmark A */
 	kprintf("Running benchmark A ....\n");
     for (i = 0; i < 6; i++) {
-        resume(create(cpubnd, 1024, 20, "cpubndA", 0));
+        resume(create(cpubnd, 1024, 20, "cpubnd", 0));
     }
-    //sleepms(8000);
 
 	/* Benchmark B */
 	kprintf("Running benchmark B ....\n");
     for (i = 0; i < 6; i++) {
-        resume(create(iobnd, 1024, 20, "iobndB", 0));
+        resume(create(iobnd, 1024, 20, "iobnd", 0));
     }
-    //sleepms(8000);
 	
 	/* Benchmark C */
 	kprintf("Running benchmark C ....\n");
     for (i = 0; i < 3; i++) {
-        resume(create(cpubnd, 1024, 20, "cpubndC", 0));
-        resume(create(iobnd, 1024, 20, "iobndC", 0));
+        resume(create(cpubnd, 1024, 20, "cpubnd", 0));
+        resume(create(iobnd, 1024, 20, "iobnd", 0));
     }
-    //sleepms(8000);
 
 	/* Benchmark D */
 	kprintf("Running benchmark D ....\n");
     for (i = 0; i < 2; i++) {
-        resume(create(cpubnd, 1024, 20, "cpubndD", 0));
+        resume(create(cpubnd, 1024, 20, "cpubnd", 0));
     }
     sleepms(3000);
     for (i = 0; i < 2; i++) {
         resume(create(cpubnd, 1024, 20, "cpubndD", 0));
     }
-    //sleepms(8000);
 }
 
 void test_bonus_problem()

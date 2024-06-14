@@ -25,6 +25,10 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	ptold = &proctab[currpid];
 
 	if (ptold->prstate == PR_CURR) {  /* Process remains eligible */
+
+		/*For the currently running process, CPU usage will be the sum of prcpu and a global variable currcpu*/
+		ptold->prcpu += currcpu; 
+
 		if (ptold->prprio > firstkey(readylist)) {
 			return;
 		}
@@ -32,12 +36,11 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 		/* Old process will no longer remain current */
 
 		ptold->prstate = PR_READY;
-		ptold->prbeginready = clkcounterms;
-		ptold->prcpu += currcpu; 
-		
-		insert(currpid, readylist, ptold->prprio);
-		
+		ptold->prbeginready = clkcounterms;		
+		insert(currpid, readylist, ptold->prprio);		
 	}
+
+	currcpu = 0;
 
 	/* Force context switch to highest priority ready process */
 
@@ -45,7 +48,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	ptnew = &proctab[currpid];
 	ptnew->prstate = PR_CURR;
 	preempt = QUANTUM;		/* Reset time slice for process	*/
-	currcpu = 0;
+	
 
 	int32 time_in_ready = clkcounterms - ptnew->prbeginready;
 	if(time_in_ready == 0){
