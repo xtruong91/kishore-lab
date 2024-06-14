@@ -10,7 +10,12 @@
 syscall responsetime(pid32 pid) /* Process ID */
 {
 
+	intmask	mask;			/* Saved interrupt mask		*/
+	mask = disable();
+	uint32 responsetime = 0;
+
 	if (isbadpid(pid)) {
+		restore(mask);
 		return SYSERR;
 	}
 
@@ -21,9 +26,10 @@ syscall responsetime(pid32 pid) /* Process ID */
 		the first time but not current.
 		If so, prctxswcount will be 0 and let
 		responsetime() return clkcounterms - prbeginready */
-		return clkcounterms - prptr->prbeginready;
+		responsetime = clkcounterms - prptr->prbeginready;
+		restore(mask);
+		return responsetime;
 	}
-
 
 	if(prptr->prstate==PR_READY){
 		/* If pid specified in the argument of responsetime()
@@ -31,9 +37,12 @@ syscall responsetime(pid32 pid) /* Process ID */
 		then responsetime() will add clkcounterms - prbeginready
 		to prresptime (but not update prresptime) and divide the
 		resultant value by prctxswcount + 1 */
-		return (clkcounterms-prptr->prbeginready + prptr->prresptime)/(prptr->prctxswcount+1);
+		responsetime =  ((clkcounterms - prptr->prbeginready) + prptr->prresptime)/(prptr->prctxswcount+1);
+		restore(mask);
+		return responsetime;
 	}
-
-	return prptr->prresptime/prptr->prctxswcount;
+	responsetime = prptr->prresptime/prptr->prctxswcount;
+	restore(mask);
+	return responsetime;
 
 }

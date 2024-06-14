@@ -21,7 +21,7 @@ void cpubnd(void) {
 
     // Print benchmark output
 	intmask mask = disable();
-    kprintf("PID %d: CPU-bound, clkcounterms: %u, CPU usage: %u, Response time: %u\n",
+    kprintf("PID %d: CPU-bound, clkcounterms: %u, CPU usage: %u, Response time: %u \r\n",
             currpid, clkcounterms, proctab[currpid].prcpu, responsetime(currpid));
 	restore(mask);
 }

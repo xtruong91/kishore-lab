@@ -10,10 +10,10 @@ void test_bonus_problem();
 
 process	main(void)
 {
-	kprintf("Test process executing main(): PID = %d\n", getpid());
+	kprintf("Test process executing main(): PID = %d \r\n", getpid());
 
 	test_dynamic_priority_scheduling();
-	test_bonus_problem();
+	//test_bonus_problem();
 
 	return OK;
 
@@ -60,14 +60,14 @@ void test_dynamic_priority_scheduling()
 {
 	// set priority of parent process is 10
 	chprio(getpid(),10);
-	kprintf("changed priority of process main: priority = %d\n", getprio(currpid));	
+	kprintf("changed priority of process main: priority = %d \r\n", getprio(currpid));	
 	int i;
     /* Benchmark A */
-	kprintf("Running benchmark A ....\n");
+	//kprintf("Running benchmark A ....\n");
     for (i = 0; i < 6; i++) {
         resume(create(cpubnd, 1024, 20, "cpubnd", 0));
     }
-
+#if (0)
 	/* Benchmark B */
 	kprintf("Running benchmark B ....\n");
     for (i = 0; i < 6; i++) {
@@ -90,6 +90,7 @@ void test_dynamic_priority_scheduling()
     for (i = 0; i < 2; i++) {
         resume(create(cpubnd, 1024, 20, "cpubndD", 0));
     }
+#endif
 }
 
 void test_bonus_problem()

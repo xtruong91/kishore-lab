@@ -38,6 +38,7 @@ void	clkhandler()
 		}
 	}
 
+#if (DYNAMIC_PRIO == 1)
 	if(proctab[currpid].prstate==PR_CURR){
 		proctab[currpid].time_slice--;
 		if(proctab[currpid].time_slice<=0){
@@ -52,7 +53,7 @@ void	clkhandler()
 			ready(currpid);
 		}
 	}
-
+#endif
 	/* Decrement the preemption counter, and reschedule when the */
 	/*   remaining time reaches zero			     */
 

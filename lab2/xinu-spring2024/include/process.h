@@ -68,7 +68,9 @@ extern	int32	prcount;	/* Currently active processes		*/
 extern	pid32	currpid;	/* Currently executing process		*/
 volatile extern uint32 currcpu;	/* estimates the time (in msec) that the current process has spent in state PR_CURR after being context-switched in */
 
-#define XINUDEBUG  /*define the macro XINUDEBUG to enable debugging prints
-*/ 
-#define STOPPINGTIME 8000
+#define XINUDEBUG  /*define the macro XINUDEBUG to enable debugging prints*/ 
+
+#define STOPPINGTIME 100
+
+#define DYNAMIC_PRIO	0 // When implementing and testing code to monitor CPU usage and response time, use the legacy fixed priority XINU kernel
 

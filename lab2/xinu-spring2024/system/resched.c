@@ -24,10 +24,16 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 
 	ptold = &proctab[currpid];
 
+#ifdef XINUDEBUG
+		if(currpid != 0){
+			kprintf("switched out PID %d, state = %d, clk= %u, prcpu=%u, currcpu=%u \r\n" , currpid, ptold->prstate, clkcounterms,ptold->prcpu, currcpu);
+		}
+#endif
+
 	if (ptold->prstate == PR_CURR) {  /* Process remains eligible */
 
 		/*For the currently running process, CPU usage will be the sum of prcpu and a global variable currcpu*/
-		ptold->prcpu += currcpu; 
+		 
 
 		if (ptold->prprio > firstkey(readylist)) {
 			return;
@@ -40,16 +46,23 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 		insert(currpid, readylist, ptold->prprio);		
 	}
 
+	ptold->prcpu += currcpu;
 	currcpu = 0;
 
 	/* Force context switch to highest priority ready process */
 
 	currpid = dequeue(readylist);
 	ptnew = &proctab[currpid];
+#ifdef XINUDEBUG
+		if(currpid != 0){
+			kprintf("switched in PID %d, state = %d, clk= %u, prcpu=%u, currcpu=%u \r\n" , currpid, ptnew->prstate, clkcounterms,ptnew->prcpu, currcpu);
+		}
+#endif
+
 	ptnew->prstate = PR_CURR;
 	preempt = QUANTUM;		/* Reset time slice for process	*/
 	
-
+#if (1)
 	int32 time_in_ready = clkcounterms - ptnew->prbeginready;
 	if(time_in_ready == 0){
 		ptnew->prresptime += 1;
@@ -57,9 +70,10 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 		ptnew->prresptime += time_in_ready;
 	}
 	ptnew->prctxswcount ++;
-
 	ptnew->time_slice = dynprio[ptnew->prprio].ts_quantum;
-	
+#else // FIXED_PRIO
+
+#endif	
 	ctxsw(&ptold->prstkptr, &ptnew->prstkptr);
 	/* Old process returns here when resumed */
 
