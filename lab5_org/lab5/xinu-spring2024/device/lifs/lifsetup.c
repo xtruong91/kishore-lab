@@ -64,8 +64,44 @@ status	lifsetup (
 
 	if (lifptr->lifpos >= LIF_AREA_DIRECT) {
 		/* TODO: implement indirect blocks support */
-		kprintf("indirect blocks not implemented\n");
-		exit();
+#ifdef XINUDEBUG
+		kprintf("the lifsetup has implemented indirect blocks\n");
+		//exit();
+#endif 
+		dbid32	indnum = lifptr->lifiblock.ind;
+		if (indnum == LF_DNULL) {
+			indnum = lifdballoc((struct lifdbfree*)&lifptr->lifdblock);
+			lifptr->lifiblock.ind = indnum;
+			//lifindbinit(&lifptr->lifindblock);
+			// dirty because the content in the i-block (its data blocks) is updated
+			lifptr->lifibdirty = TRUE;			
+		}
+		else if (indnum != lifptr->lifindnum) {
+			read(Lif_data.lif_dskdev, (char*)lifptr->lifdblock, indnum);
+			lifptr->lifdbdirty = FALSE;
+		}
+		lifptr->lifindnum = indnum;
+		dindex = (lifptr->lifpos & LF_DMASK) >> 2;
+		dnumptr = &lifptr->lifindblock[dindex];
+		dnum = *dnumptr;
+
+		if (dnum == LF_DNULL) {		/* Allocate new data block */
+			dnum = lifdballoc((struct lifdbfree*)&lifptr->lifdblock);
+			*dnumptr = dnum;
+			lifptr->lifindbdirty = TRUE;
+		}
+		else if (dnum != lifptr->lifdnum) {
+			read(Lif_data.lif_dskdev, (char*)lifptr->lifdblock, dnum);
+			lifptr->lifindbdirty = FALSE;
+		}
+		lifptr->lifdnum = dnum;
+		/* Use current file offset to set the pointer to the next byte	*/
+		/*   within the data block					*/
+
+		lifptr->lifbyte = &lifptr->lifdblock[lifptr->lifpos & LF_DMASK];
+		signal(Lif_data.lif_mutex);
+		return OK;
+
 	} else {
 		dindex = (lifptr->lifpos & LF_IMASK) >> 9;
 		dnumptr = &lifptr->lifiblock.ib_dba[dindex];

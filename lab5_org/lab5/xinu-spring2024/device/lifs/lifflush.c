@@ -37,6 +37,24 @@ status	lifflush (
 		lifibput(Lif_data.lif_dskdev, lifptr->lifinum, &lifptr->lifiblock);
 		lifptr->lifibdirty = FALSE;
 	}
+	// added indirect, doubly, triply block
+	/* Write indirect block */
+	if (lifptr->lifindbdirty) {
+		write(Lif_data.lif_dskdev, (char *)lifptr->lifindblock, lifptr->lifindnum);
+		lifptr->lifindbdirty = FALSE;
+	}
+
+	/* Write doubly indirect block */
+	if (lifptr->lif2indbdirty) {
+		write(Lif_data.lif_dskdev, (char *)lifptr->lif2indblock, lifptr->lif2indnum);
+		lifptr->lif2indbdirty = FALSE;
+	}
+
+	/* Write triply indirect block */
+	if (lifptr->lif3indbdirty) {
+		write(Lif_data.lif_dskdev, (char *)lifptr->lif3indblock, lifptr->lif3indnum);
+		lifptr->lif3indbdirty = FALSE;
+	}
 	
 	return OK;
 }

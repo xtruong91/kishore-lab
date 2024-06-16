@@ -42,5 +42,8 @@ devcall	liflinit (
 
 	lifptr->lifbyte = &lifptr->lifdblock[LF_BLKSIZ];
 	lifptr->lifibdirty = lifptr->lifdbdirty = FALSE;
+	lifptr->lifindbdirty = FALSE;
+	lifptr->lif2indbdirty = FALSE;
+	lifptr->lif3indbdirty = FALSE;
 	return OK;
 }

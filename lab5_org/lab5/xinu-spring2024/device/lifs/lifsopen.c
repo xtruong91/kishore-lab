@@ -171,14 +171,20 @@ devcall	lifsopen (
 
 	lifptr->lifinum    = LF_INULL;
 	lifptr->lifdnum    = LF_DNULL;
-
+	//initialized indirect, doubly indirect,trybly indirect
+	lifptr->lifindnum  = LF_DNULL;
+	lifptr->lif2indnum = LF_DNULL;
+	lifptr->lif3indnum = LF_DNULL;
 	/* Initialize byte pointer to address beyond the end of the	*/
 	/*	buffer (i.e., invalid pointer triggers setup)		*/
 
 	lifptr->lifbyte = &lifptr->lifdblock[LF_BLKSIZ];
 	lifptr->lifibdirty = FALSE;
 	lifptr->lifdbdirty = FALSE;
-
+	//initialized indirect, doubly indirect,trybly indirect
+	lifptr->lifindbdirty = FALSE;
+	lifptr->lif2indbdirty = FALSE;
+	lifptr->lif3indbdirty = FALSE;
 	signal(Lif_data.lif_mutex);
 
 	return lifptr->lifdev;
