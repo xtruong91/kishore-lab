@@ -32,7 +32,8 @@ status	lifsetup (
 
 	/* If existing index block or data block changed, write to disk	*/
 
-	if (lifptr->lifibdirty || lifptr->lifdbdirty) {
+	if (lifptr->lifibdirty || lifptr->lifdbdirty ||
+			lifptr->lifindbdirty || lifptr->lif2indbdirty || lifptr->lif3indbdirty) {
 		lifflush(lifptr);
 	}
 	ibnum = lifptr->lifinum;		/* Get ID of curr. index block	*/
@@ -69,6 +70,7 @@ status	lifsetup (
 		//exit();
 #endif 
 		dbid32	indnum = lifptr->lifiblock.ind;
+		// If there is no Singly Indirect data block, allocate new Singly Data Block
 		if (indnum == LF_DNULL) {
 			indnum = lifdballoc((struct lifdbfree*)&lifptr->lifdblock);
 			lifptr->lifiblock.ind = indnum;
@@ -76,10 +78,12 @@ status	lifsetup (
 			// dirty because the content in the i-block (its data blocks) is updated
 			lifptr->lifibdirty = TRUE;			
 		}
+		// get the current singly indirect block data
 		else if (indnum != lifptr->lifindnum) {
 			read(Lif_data.lif_dskdev, (char*)lifptr->lifdblock, indnum);
 			lifptr->lifdbdirty = FALSE;
 		}
+
 		lifptr->lifindnum = indnum;
 		dindex = (lifptr->lifpos & LF_DMASK) >> 2;
 		dnumptr = &lifptr->lifindblock[dindex];
