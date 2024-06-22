@@ -189,9 +189,9 @@ struct	dentry	devtab[NDEVS] =
 
 /* LIFILESYS is lifs */
 	{ 24, 0, "LIFILESYS",
-	  (void *)lifsinit, (void *)lifsopen, (void *)ioerr,
-	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
-	  (void *)ioerr, (void *)ioerr, (void *)ioerr,
+	  (void *)lifsinit, (void *)lifsopen, (void *)liflclose,
+	  (void *)liflread, (void *)liflwrite, (void *)liflseek,
+	  (void *)liflgetc, (void *)liflputc, (void *)liflcontrol,
 	  (void *)0x0, (void *)ionull, 0 },
 
 /* LIFILE0 is lifl */

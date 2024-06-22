@@ -27,7 +27,8 @@ devcall	liflclose (
 	/* Write index or data blocks to disk if they have changed */
 
 	if (Lif_data.lif_dirdirty || lifptr->lifdbdirty || lifptr->lifibdirty || 
-			lifptr->lifindbdirty || lifptr->lif2indbdirty || lifptr->lif3indbdirty ) {
+			lifptr->lifindbdirty || lifptr->lif2indbdirty || 
+			lifptr->lif3indbdirty ) {
 		lifflush(lifptr);
 	}
 

@@ -38,3 +38,13 @@ dbid32	lifdballoc (
 	memset((char *)dbuff, DFILL, LF_BLKSIZ);
 	return dnum;
 }
+
+// initialize the indirect block
+void	lifindbinit (
+	  dbid32 *indbuf /* Addr. of buffer to hold data block	*/
+	) {
+	int i;
+	for (i = 0; i < LIF_NUM_ENT_PER_BLK; ++i) {
+		indbuf[i] = LIF_DNULL;
+	}
+}

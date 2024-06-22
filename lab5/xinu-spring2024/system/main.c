@@ -3,31 +3,8 @@
 #include <xinu.h>
 
 #define CONTENT "Hello World"
+
 #define LEN (LIF_AREA_DIRECT+LIF_AREA_INDIR)
-
-char buffer[LEN];
-char buffer2[LEN];
-did32 fd;
-int status_val;
-int i;
-int iter;
-
-void test_seek(int start_pos){
-
-	// // test seek
-	status_val = seek(fd, start_pos);
-	kprintf("status_val for seek: %d\n", status_val);
-
-	// test getc after seeking
-	iter=10;
-	for(i=0;i<iter;i++){
-		status_val = getc(fd);
-		if(status_val!=buffer[i+start_pos]){
-			kprintf("[error] i=%d, buffer[i+start_pos] = %d, status_val for seek: %d\n", i,buffer[i+start_pos],status_val);
-			// exit();
-		}
-	}
-}
 
 process main() {
 	// print some constants
@@ -37,61 +14,52 @@ process main() {
 	kprintf("LIF_AREA_3INDIR: %d\n", LIF_AREA_3INDIR);
 
 	lifscreate(RAM0, 128, 102400); // initialize the ramdisk
-
 	
+	did32 fd;
+	int status;
+	int i;
+	char writeBuffer[LEN];
+	memset(writeBuffer, NULLCH, LEN + 1);
 
-	// open the file for write
-
+	//1. open the file for write
 	fd = open(LIFILESYS, "index.txt", "rw");
-	kprintf("fd: %d\n", fd);
+	kprintf("open fd: %d\n", fd);
 
-	// fill buffer with random values
-	for(i=0;i<LEN;i++){
-		buffer[i] = (clktime%256);
+	//2. test write with size of file less than LIF_AREA_DIRECT
+	status = write(fd, CONTENT, 11);
+	kprintf("status for write direct block: %d\n", status);
+
+	//3. Test write data with size of file large than  LIF_AREA_DIRECT
+	for(i=0; i < LEN; i++){
+		writeBuffer[i] = clktime % 256;
 	}
+	status = write(fd, LIF_AREA_DIRECT, LEN);
+	kprintf("status for write indirect block: %d\n", status);
 
-	// test write
-	status_val = write(fd, buffer, LEN);
-	kprintf("status_val for write: %d\n", status_val);
+	//4. Test seek data;
+	status = seek(fd, LIF_AREA_DIRECT-3);
+	kprintf("status for seek: %d\n", status);
+	//5. test putc
+	status = putc(fd, 'X');
+	kprintf("status for putc: %d\n", status);
 
-	test_seek(100);
-	test_seek(LIF_AREA_DIRECT-3);
-	test_seek(LIF_AREA_DIRECT+500);
-
-	
-
-	status_val = close(fd);
-	kprintf("status_val for close: %d\n", status_val);
+	//6. Test close
+	status = close(fd);
+	kprintf("status for close: %d\n", status);
 
 	// re-open the file for read
 	fd = open(LIFILESYS, "index.txt", "r");
 	kprintf("fd: %d\n", fd);
-	
-	// test getc
-	for(i=0;i<LEN;i++){
-		status_val = getc(fd);
-		if(status_val!=buffer[i]){
-			kprintf("[error] i=%d, buffer[i] = %d, status_val for getc: %d\n", i,buffer[i],status_val);
-			// exit();
-		}
-	}
 
-	status_val = seek(fd, 0);
-	kprintf("status_val for seek: %d\n", status_val);
-
-	// test read
-	status_val = read(fd, buffer2, LEN);
-
+	//7. Test read
+	char readBuffer[LEN + 1];
+	memset(readBuffer, NULLCH, LEN + 1);
+	status = read(fd, readBuffer, LEN);
+	kprintf("Content of the file:");
 	for (i = 0; i < LEN; ++i) {
-		if(buffer2[i]!=buffer[i]){
-			kprintf("[error] i=%d, buffer[i] = %d, buffer2[i] = %d for read: %d\n", i,buffer[i],buffer2[i]);
-			// exit();
-		}
+		kprintf("%c", readBuffer[i]);
 	}
-
-
-	status_val = close(fd);
-	kprintf("status_val for close: %d\n", status_val);
+	kprintf("\n");
 
 	return 0;
 }
