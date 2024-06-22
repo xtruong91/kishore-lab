@@ -19,6 +19,8 @@ process main() {
 	int status;
 	int i;
 	char writeBuffer[LEN];
+	char data;
+
 	memset(writeBuffer, NULLCH, LEN + 1);
 
 	//1. open the file for write
@@ -28,6 +30,14 @@ process main() {
 	//2. test write with size of file less than LIF_AREA_DIRECT
 	status = write(fd, CONTENT, 11);
 	kprintf("status for write direct block: %d\n", status);
+
+	//read content of file
+	kprintf("Content of the file:");
+	for (i = 0; i < 11; ++i) {
+		seek(fd, i);
+		kprintf("%c",getc(fd));
+	}
+	kprintf("\n");
 
 	//3. Test write data with size of file large than  LIF_AREA_DIRECT
 	for(i=0; i < LEN; i++){
